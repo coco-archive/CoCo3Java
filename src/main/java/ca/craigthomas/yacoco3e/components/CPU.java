@@ -3161,7 +3161,7 @@ public class CPU extends Thread
      * @param offset the amount to offset the program counter
      */
     public void branchLong(UnsignedWord offset) {
-        io.getWordRegister(Register.PC).addSigned(offset);
+        io.getWordRegister(Register.PC).add(offset.isNegative() ? offset.getSignedInt() : offset.getInt());
         opLongDesc = "PC'=" + io.getWordRegister(Register.PC);
     }
 
