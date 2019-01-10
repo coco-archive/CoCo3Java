@@ -320,7 +320,7 @@ public class CPU extends Thread
                     /* LBGE - Long Branch on Greater Than or Equal to Zero */
                     case 0x2C:
                         memoryResult = io.getImmediateWord();
-                        if ((io.ccNegativeSet() && io.ccOverflowSet()) || (!io.ccNegativeSet() && !io.ccOverflowSet())) {
+                        if (io.ccNegativeSet() == io.ccOverflowSet()) {
                             branchLong(memoryResult.get());
                             operationTicks = 6;
                         } else {
@@ -332,7 +332,7 @@ public class CPU extends Thread
                     /* LBLT - Long Branch on Less Than or Equal to Zero */
                     case 0x2D:
                         memoryResult = io.getImmediateWord();
-                        if ((io.ccNegativeSet() && !io.ccOverflowSet()) || (!io.ccNegativeSet() && io.ccOverflowSet())) {
+                        if (io.ccNegativeSet() != io.ccOverflowSet()) {
                             branchLong(memoryResult.get());
                             operationTicks = 6;
                         } else {
@@ -344,7 +344,7 @@ public class CPU extends Thread
                     /* LBGT - Long Branch on Greater Than Zero */
                     case 0x2E:
                         memoryResult = io.getImmediateWord();
-                        if (!io.ccZeroSet() && ((io.ccNegativeSet() && io.ccOverflowSet()) || (!io.ccNegativeSet() && !io.ccOverflowSet()))) {
+                        if (!io.ccZeroSet() && io.ccNegativeSet() == io.ccOverflowSet()) {
                             branchLong(memoryResult.get());
                             operationTicks = 6;
                         } else {
@@ -356,7 +356,7 @@ public class CPU extends Thread
                     /* LBLE - Long Branch on Less Than Zero */
                     case 0x2F:
                         memoryResult = io.getImmediateWord();
-                        if (io.ccZeroSet() || ((io.ccNegativeSet() && !io.ccOverflowSet()) || (!io.ccNegativeSet() && io.ccOverflowSet()))) {
+                        if (io.ccZeroSet() || (io.ccNegativeSet() != io.ccOverflowSet())) {
                             branchLong(memoryResult.get());
                             operationTicks = 6;
                         } else {
@@ -1316,7 +1316,7 @@ public class CPU extends Thread
             /* BGE - Branch on Greater Than or Equal to Zero */
             case 0x2C:
                 memoryResult = io.getImmediateByte();
-                if ((io.ccNegativeSet() && io.ccOverflowSet()) || (!io.ccNegativeSet() && !io.ccOverflowSet())) {
+                if (io.ccNegativeSet() == io.ccOverflowSet()) {
                     branchShort(memoryResult.get().getHigh());
                     opLongDesc = "N=" + io.ccNegativeSet() + ", V=" + io.ccOverflowSet() + ", Branching";
                 } else {
@@ -1329,7 +1329,7 @@ public class CPU extends Thread
             /* BLT - Branch on Less Than or Equal to Zero */
             case 0x2D:
                 memoryResult = io.getImmediateByte();
-                if ((io.ccNegativeSet() && !io.ccOverflowSet()) || (!io.ccNegativeSet() && io.ccOverflowSet())) {
+                if (io.ccNegativeSet() != io.ccOverflowSet()) {
                     branchShort(memoryResult.get().getHigh());
                     opLongDesc = "N=" + io.ccNegativeSet() + ", V=" + io.ccOverflowSet() + ", Branching";
                 } else {
@@ -1342,7 +1342,7 @@ public class CPU extends Thread
             /* BGT - Branch on Greater Than Zero */
             case 0x2E:
                 memoryResult = io.getImmediateByte();
-                if (!io.ccZeroSet() && ((io.ccNegativeSet() && io.ccOverflowSet()) || (!io.ccNegativeSet() && !io.ccOverflowSet()))) {
+                if (!io.ccZeroSet() && io.ccNegativeSet() == io.ccOverflowSet()) {
                     branchShort(memoryResult.get().getHigh());
                     opLongDesc = "N=" + io.ccNegativeSet() + ", V=" + io.ccOverflowSet() + ", Z=" + io.ccZeroSet() + ", Branching";
                 } else {
@@ -1355,7 +1355,7 @@ public class CPU extends Thread
             /* BLE - Branch on Less Than Zero */
             case 0x2F:
                 memoryResult = io.getImmediateByte();
-                if (io.ccZeroSet() || ((io.ccNegativeSet() && !io.ccOverflowSet()) || (!io.ccNegativeSet() && io.ccOverflowSet()))) {
+                if (io.ccZeroSet() || (io.ccNegativeSet() != io.ccOverflowSet())) {
                     branchShort(memoryResult.get().getHigh());
                     opLongDesc = "N=" + io.ccNegativeSet() + ", V=" + io.ccOverflowSet() + ", Z=" + io.ccZeroSet() + ", Branching";
                 } else {
@@ -3058,7 +3058,7 @@ public class CPU extends Thread
         boolean bit7 = value.isMasked(0x80);
         boolean bit6 = value.isMasked(0x40);
         cc.or(IOController.CC_V);
-        if ((bit7 && bit6) || (!bit7 && !bit6)) {
+        if (bit7 == bit6) {
             cc.and(~IOController.CC_V);
         }
         cc.or(result.isZero() ? IOController.CC_Z : 0);
@@ -3161,7 +3161,7 @@ public class CPU extends Thread
      * @param offset the amount to offset the program counter
      */
     public void branchLong(UnsignedWord offset) {
-        io.getWordRegister(Register.PC).add(offset.isNegative() ? offset.getSignedInt() : offset.getInt());
+        io.getWordRegister(Register.PC).addSigned(offset);
         opLongDesc = "PC'=" + io.getWordRegister(Register.PC);
     }
 

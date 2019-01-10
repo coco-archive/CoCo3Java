@@ -84,6 +84,15 @@ public class UnsignedWord
         and(0xFFFF);
     }
 
+    public void addSigned(UnsignedWord wordValue) {
+        if (wordValue.isNegative()) {
+            this.value -= (wordValue.getInt() & ~0x8000);
+        } else {
+            this.value += wordValue.getInt();
+        }
+        and(0xFFFF);
+    }
+
     /**
      * Returns a new UnsignedWord that is the twos compliment
      * value of the current Word.
@@ -206,7 +215,7 @@ public class UnsignedWord
      * @return the signed integer representation of the word
      */
     public int getSignedInt() {
-        return (isMasked(0x8000)) ? -(twosCompliment().getInt()) : value;
+        return (isNegative()) ? -(twosCompliment().getInt()) : value;
     }
 
     /**

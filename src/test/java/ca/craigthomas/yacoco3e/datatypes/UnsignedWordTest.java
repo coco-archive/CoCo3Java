@@ -6,6 +6,7 @@ package ca.craigthomas.yacoco3e.datatypes;
 
 import static org.junit.Assert.*;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class UnsignedWordTest
@@ -123,5 +124,25 @@ public class UnsignedWordTest
     public void testInverseWorksCorrectly() {
         UnsignedWord word1 = new UnsignedWord(0xFFFF);
         assertEquals(0x0, word1.inverse().getInt());
+    }
+
+    @Test
+    public void testGetSignedWord() {
+        UnsignedWord word1 = new UnsignedWord(0x1);
+        assertEquals(1, word1.getSignedInt());
+    }
+
+    @Ignore
+    @Test
+    public void testGetSignedWordNegative() {
+        UnsignedWord word1 = new UnsignedWord(0x8001);
+        assertEquals(-1, word1.getSignedInt());
+    }
+
+    @Ignore
+    @Test
+    public void testGetSignedWordNegativeLargeNumber() {
+        UnsignedWord word1 = new UnsignedWord(0xF001);
+        assertEquals(-28673, word1.getSignedInt());
     }
 }
