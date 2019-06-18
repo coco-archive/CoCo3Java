@@ -95,7 +95,7 @@ public class Screen
                 break;
 
             case G6R:
-                this.screenMode = new G6RScreenMode(scale, colorSet);
+                this.screenMode = new G6RScreenMode(scale, colorSet, true);
                 break;
 
             default:
