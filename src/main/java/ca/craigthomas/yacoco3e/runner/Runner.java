@@ -14,7 +14,6 @@ import com.beust.jcommander.JCommander;
 public class Runner
 {
     public static void main(String [] argv) {
-
         /* Parse the arguments */
         Arguments arguments = new Arguments();
         JCommander jCommander = JCommander.newBuilder()

@@ -324,6 +324,7 @@ public class DiskDrive
 
         /* Restore - seek track 0 */
         if (intCommand == 0x0) {
+            LOGGER.info("Restore to track 0 - verify " + verify);
             restore(verify);
             setNotBusy();
             fireInterrupt();
@@ -332,6 +333,7 @@ public class DiskDrive
 
         /* Seek - seek to track specified in the data register */
         if (intCommand == 0x1) {
+            LOGGER.info("Seek to track");
             seek(verify);
             setNotBusy();
             fireInterrupt();
@@ -340,6 +342,7 @@ public class DiskDrive
 
         /* Step without Update - steps once in the last direction */
         if (intCommand == 0x2) {
+            LOGGER.info("Step without update");
             step(false, verify);
             setNotBusy();
             fireInterrupt();
@@ -348,6 +351,7 @@ public class DiskDrive
 
         /* Step with Update - steps once in the last direction */
         if (intCommand == 0x3) {
+            LOGGER.info("Step with update");
             step(true, verify);
             setNotBusy();
             fireInterrupt();
@@ -356,6 +360,7 @@ public class DiskDrive
 
         /* Step In without Update - steps once towards track 76 */
         if (intCommand == 0x4) {
+            LOGGER.info("Step in without update");
             stepIn(false, verify);
             setNotBusy();
             fireInterrupt();
@@ -364,6 +369,7 @@ public class DiskDrive
 
         /* Step In with Update - steps once towards track 76 */
         if (intCommand == 0x5) {
+            LOGGER.info("Step in with update");
             stepIn(true, verify);
             setNotBusy();
             fireInterrupt();
@@ -372,6 +378,7 @@ public class DiskDrive
 
         /* Step Out without Update - steps once towards track 0 */
         if (intCommand == 0x6) {
+            LOGGER.info("Step out without update");
             stepOut(false, verify);
             setNotBusy();
             fireInterrupt();
@@ -380,6 +387,7 @@ public class DiskDrive
 
         /* Step Out with Update - steps once towards track 0 */
         if (intCommand == 0x7) {
+            LOGGER.info("Step out with update");
             stepOut(true, verify);
             setNotBusy();
             fireInterrupt();
@@ -389,7 +397,7 @@ public class DiskDrive
         /* Read single sector */
         if (intCommand == 0x8) {
             int logicalSector = tracks[currentTrack].getLogicalSector(currentSector);
-            LOGGER.fine("Read single sector - Track " + currentTrack + ", Sector " + currentSector + ", Logical Sector " + logicalSector);
+            LOGGER.info("Read single sector - Track " + currentTrack + ", Sector " + currentSector + ", Logical Sector " + logicalSector);
             if (logicalSector == -1) {
                 setNotBusy();
                 setRecordNotFound();
@@ -404,7 +412,7 @@ public class DiskDrive
 
         /* Read multiple sectors */
         if (intCommand == 0x9) {
-            LOGGER.fine("Read multiple sectors");
+            LOGGER.info("Read multiple sectors");
             currentCommand = DiskCommand.READ_MULTIPLE_SECTORS;
             setDRQ();
             return;
@@ -413,7 +421,7 @@ public class DiskDrive
         /* Write single sector */
         if (intCommand == 0xA) {
             int logicalSector = tracks[currentTrack].getLogicalSector(currentSector);
-            LOGGER.fine("Write single sector - Track " + currentTrack + ", Sector " + currentSector + ", Logical Sector " + logicalSector);
+            LOGGER.info("Write single sector - Track " + currentTrack + ", Sector " + currentSector + ", Logical Sector " + logicalSector);
             if (logicalSector == -1) {
                 setNotBusy();
                 setRecordNotFound();
@@ -435,7 +443,7 @@ public class DiskDrive
 
         /* Read address */
         if (intCommand == 0xC) {
-            LOGGER.fine("Read address");
+            LOGGER.info("Read address");
             tracks[currentTrack].setCommand(currentSector, DiskCommand.READ_ADDRESS);
             currentCommand = DiskCommand.READ_ADDRESS;
             setDRQ();
@@ -444,7 +452,7 @@ public class DiskDrive
 
         /* Force interrupt */
         if (intCommand == 0xD) {
-            LOGGER.fine("Force interrupt");
+            LOGGER.info("Force interrupt");
             currentCommand = DiskCommand.NONE;
             fireInterrupt();
             return;
@@ -452,7 +460,7 @@ public class DiskDrive
 
         /* Read track */
         if (intCommand == 0xE) {
-            LOGGER.fine("Read track");
+            LOGGER.info("Read track");
             tracks[currentTrack].startReadTrack();
             currentCommand = DiskCommand.READ_TRACK;
             setDRQ();
@@ -461,7 +469,7 @@ public class DiskDrive
 
         /* Write track */
         if (intCommand == 0xF) {
-            LOGGER.fine("Write track - Track " + currentTrack);
+            LOGGER.info("Write track - Track " + currentTrack);
             tracks[currentTrack].startWriteTrack();
             currentCommand = DiskCommand.WRITE_TRACK;
             setBusy();
@@ -490,6 +498,7 @@ public class DiskDrive
      */
     public void seek(boolean verify) {
         int trackToSeek = dataRegisterIn.getShort();
+        LOGGER.info("Seeking to track " + trackToSeek);
         if (currentTrack > trackToSeek) {
             direction = -1;
         }
